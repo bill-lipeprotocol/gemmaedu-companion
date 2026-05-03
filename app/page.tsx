@@ -79,11 +79,11 @@ export default function Home() {
             </button>
           )}
 
-          {explanation && (
-            <div className="mt-8 bg-gray-50 border border-gray-200 rounded-2xl p-6 text-sm leading-relaxed whitespace-pre-wrap">
+          { explanation && (
+            <div className="mt-8 bg-gray-50 border border-gray-200 rounded-2xl p-6 text-gray-900 text-base leading-relaxed whitespace-pre-wrap font-medium">
               {explanation}
             </div>
-          )}
+         )}
         </div>
 
         <div className="text-center text-xs text-gray-500 mt-10">
