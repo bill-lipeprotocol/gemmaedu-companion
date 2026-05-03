@@ -34,16 +34,16 @@ export default function Home() {
     }, 800);
   };
 
-  // Register service worker for full offline support
+    // Register service worker for full offline support
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
           .then((registration) => {
-            console.log('✅ Service Worker registered for offline support');
+            console.log('✅ Service Worker registered - full offline support active');
           })
           .catch((error) => {
-            console.log('❌ Service Worker registration failed:', error);
+            console.log('Service Worker registration failed:', error);
           });
       });
     }
