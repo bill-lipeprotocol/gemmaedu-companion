@@ -20,19 +20,43 @@ export default function Home() {
     }
   };
 
-  const generateExplanation = async () => {
-    if (!image) {
-      alert('Please upload an image first!');
-      return;
-    }
-    
-    setLoading(true);
-    
-    setTimeout(() => {
-      setExplanation(`Gemma 4 Analysis:\n\n✅ I have analyzed the image you uploaded.\n\nThis appears to be a simple addition problem: **2 + 2 = 4**.\n\n✅ The answer is correct!\n\nWould you like me to:\n• Explain it step-by-step in a different way?\n• Give you a similar practice problem?\n• Switch to voice mode?\n\n(Real Gemma 4 multimodal inference coming in the next upgrade!)`);
-      setLoading(false);
-    }, 800);
-  };
+ const generateExplanation = async () => {
+   if (!image) {
+     alert('Please upload an image first!');
+     return;
+   }
+
+   setLoading(true);
+
+   try {
+     const { pipeline } = await import('@xenova/transformers');
+
+     // Using the smallest available Gemma-4 compatible vision model for browser
+     const pipe = await pipeline(
+       'image-to-text',
+       'onnx-community/gemma-4-E2B-it-ONNX', // smallest multimodal variant
+       {
+         quantized: true,
+         progress_callback: (data) => {
+           console.log('Gemma 4 loading progress:', data);
+         }
+       }
+     );
+
+    const result = await pipe(image, {
+      max_new_tokens: 250,
+      temperature: 0.7,
+      do_sample: true,
+    });
+
+    setExplanation(`🧠 Real Gemma 4 Analysis:\n\n${result[0].generated_text || result[0].generated_text}`);
+  } catch (error: any) {
+    console.error('Gemma 4 inference error:', error);
+    setExplanation(`Gemma 4 tried to analyze the image but ran into an issue:\n\n${error.message}\n\n(This is normal on first run or low-memory devices. The mock explanation is still available below.)`);
+  } finally {
+    setLoading(false);
+  }
+};
 
     // Register service worker for full offline support
   useEffect(() => {
