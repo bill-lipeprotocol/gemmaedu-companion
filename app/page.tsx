@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Camera, Send } from 'lucide-react';
 
 export default function Home() {
@@ -28,12 +28,26 @@ export default function Home() {
     
     setLoading(true);
     
-    // Improved mock that feels like real Gemma 4 (no hardcoded wrong equation)
     setTimeout(() => {
       setExplanation(`Gemma 4 Analysis:\n\n✅ I have analyzed the image you uploaded.\n\nThis appears to be a simple addition problem: **2 + 2 = 4**.\n\n✅ The answer is correct!\n\nWould you like me to:\n• Explain it step-by-step in a different way?\n• Give you a similar practice problem?\n• Switch to voice mode?\n\n(Real Gemma 4 multimodal inference coming in the next upgrade!)`);
       setLoading(false);
     }, 800);
   };
+
+  // Register service worker for full offline support
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('✅ Service Worker registered for offline support');
+          })
+          .catch((error) => {
+            console.log('❌ Service Worker registration failed:', error);
+          });
+      });
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
@@ -79,11 +93,11 @@ export default function Home() {
             </button>
           )}
 
-          { explanation && (
+          {explanation && (
             <div className="mt-8 bg-gray-50 border border-gray-200 rounded-2xl p-6 text-gray-900 text-base leading-relaxed whitespace-pre-wrap font-medium">
               {explanation}
             </div>
-         )}
+          )}
         </div>
 
         <div className="text-center text-xs text-gray-500 mt-10">
